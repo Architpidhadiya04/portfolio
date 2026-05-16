@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ArrowUpRight,
   Code2,
@@ -6,10 +6,12 @@ import {
   Github,
   Linkedin,
   Mail,
+  Menu,
   Rocket,
   Server,
   ShieldCheck,
   Sparkles,
+  X,
 } from "lucide-react";
 import Profile from "./pages/Profile.jsx";
 import Contact from "./pages/Contact.jsx";
@@ -64,19 +66,72 @@ const timeline = [
 ];
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 200);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <main>
-      <nav className="nav">
-        <a className="brand" href="#top" aria-label="Portfolio home">
-          <Sparkles size={20} />
-          <span>Portfolio</span>
-        </a>
-        <div className="nav-links" aria-label="Primary navigation">
-          <a href="#profile">Profile</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
+    <main className={darkMode ? "dark-mode" : ""}>
+      <nav className={`${menuOpen ? "nav nav-open" : "nav"} ${scrolled ? "nav-scrolled" : ""}`}>
+        <div
+          className={`nav-links${menuOpen ? " open" : ""}`}
+          id="primary-navigation"
+          aria-label="Primary navigation"
+        >
+          <div className="nav-drawer-header">
+            <span>Menu</span>
+            <button
+              type="button"
+              className="nav-close"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <a href="#profile" onClick={() => setMenuOpen(false)}>
+            Profile
+          </a>
+          <a href="#projects" onClick={() => setMenuOpen(false)}>
+            Projects
+          </a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>
+            Contact
+          </a>
         </div>
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          <span className="menu-text">Menu</span>
+          <span className="sr-only">Toggle navigation</span>
+        </button>
+        <div
+          className={`nav-overlay${menuOpen ? " open" : ""}`}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
       </nav>
+      <button
+        type="button"
+        className="dark-mode-toggle"
+        onClick={() => setDarkMode((current) => !current)}
+        aria-label="Toggle dark mode"
+      >
+        <span className="toggle-icon">{darkMode ? "☀️" : "🌙"}</span>
+      </button>
 
       <section className="hero" id="top">
         <div className="hero-image" aria-hidden="true" />
@@ -94,6 +149,21 @@ function App() {
             <a className="button secondary" href="mailto:hello@example.com">
               Contact Me <Mail size={18} />
             </a>
+          </div>
+
+          <div className="hero-panels" aria-label="Highlights of working style">
+            <article className="hero-panel">
+              <h3>Built for products</h3>
+              <p>Interactive UI details, smooth motion, and meaningful feedback at every step.</p>
+            </article>
+            <article className="hero-panel">
+              <h3>End-to-end flow</h3>
+              <p>Design, API, and deployment align to create polished experiences that feel modern.</p>
+            </article>
+            <article className="hero-panel">
+              <h3>Responsive ready</h3>
+              <p>Layouts reshape gracefully for phones, tablets, and widescreen viewing.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -173,11 +243,6 @@ function App() {
       </section>
 
       <Contact />
-
-      <footer>
-        <Rocket size={18} />
-        <span>Designed and built with React.</span>
-      </footer>
     </main>
   );
 }

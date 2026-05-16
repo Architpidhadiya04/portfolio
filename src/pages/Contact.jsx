@@ -66,22 +66,48 @@ function Contact() {
         <form className="contact-form" ref={formRef} onSubmit={handleSubmit}>
           <label>
             Name
-            <input name="name" value={form.name} onChange={handleChange} placeholder="Your name" />
+            <input
+              name="name"
+              autoComplete="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Your name"
+            />
           </label>
 
           <label>
             Email
-            <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="you@example.com" />
+            <input
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+            />
           </label>
 
           <label>
             Subject
-            <input name="subject" value={form.subject} onChange={handleChange} placeholder="Project, role, or idea" />
+            <input
+              name="subject"
+              autoComplete="off"
+              value={form.subject}
+              onChange={handleChange}
+              placeholder="Project, role, or idea"
+            />
           </label>
 
           <label>
             Message
-            <textarea name="message" value={form.message} onChange={handleChange} rows="6" placeholder="Tell me what you'd like to build." />
+            <textarea
+              name="message"
+              autoComplete="off"
+              value={form.message}
+              onChange={handleChange}
+              rows="6"
+              placeholder="Tell me what you'd like to build."
+            />
           </label>
 
           <button className="button primary" type="submit" disabled={status.loading}>
