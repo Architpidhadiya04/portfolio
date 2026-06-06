@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
-import { Mail, Send, CheckCircle, AlertCircle } from "lucide-react";
+import { Send, CheckCircle, AlertCircle, Mail, MessageSquare } from "lucide-react";
 
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || "your_service_id";
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "your_template_id";
@@ -42,41 +42,52 @@ function Contact() {
   };
 
   return (
-    <section className="section contact-section" id="contact">
-      <div className="section-header">
-        <p className="eyebrow">Contact</p>
-        <h2>Talk to me about your next build.</h2>
-      </div>
-
-      <div className="contact-grid">
-        <div className="contact-intro">
-          <p>
-            Use this form to send a message directly to my inbox. If you want,
-            you can also reach me instantly at <strong>architpidhadiya04@gmail.com</strong>.
+    <section className="contact-panel">
+      <div className="contact-grid-v2">
+        <div className="contact-info-panel">
+          <div className="section-label">Get in Touch</div>
+          <h2 className="serif-title">Let's discuss your next project.</h2>
+          <p className="contact-desc-text">
+            Have a role, project, or general inquiry? Feel free to reach out. I typically respond within 24 hours.
           </p>
-          <div className="contact-summary">
-            <Mail size={20} />
-            <div>
-              <strong>architpidhadiya04@gmail.com</strong>
-              <span>Preferred email for quick replies</span>
+
+          <div className="contact-details-list">
+            <a href="mailto:architpidhadiya04@gmail.com" className="contact-link-item">
+              <div className="icon-badge">
+                <Mail size={16} />
+              </div>
+              <div className="link-detail">
+                <span className="link-label">Email Me</span>
+                <strong className="link-val">architpidhadiya04@gmail.com</strong>
+              </div>
+            </a>
+            <div className="contact-link-item">
+              <div className="icon-badge">
+                <MessageSquare size={16} />
+              </div>
+              <div className="link-detail">
+                <span className="link-label">Response Time</span>
+                <strong className="link-val">Usually within a business day</strong>
+              </div>
             </div>
           </div>
         </div>
 
-        <form className="contact-form" ref={formRef} onSubmit={handleSubmit}>
-          <label>
-            Name
+        <form className="contact-form-v2" ref={formRef} onSubmit={handleSubmit}>
+          <div className="form-group">
             <input
               name="name"
+              type="text"
               autoComplete="name"
               value={form.name}
               onChange={handleChange}
               placeholder="Your name"
+              required
+              className="form-input"
             />
-          </label>
+          </div>
 
-          <label>
-            Email
+          <div className="form-group">
             <input
               name="email"
               type="email"
@@ -84,46 +95,50 @@ function Contact() {
               value={form.email}
               onChange={handleChange}
               placeholder="you@example.com"
+              required
+              className="form-input"
             />
-          </label>
+          </div>
 
-          <label>
-            Subject
+          <div className="form-group">
             <input
               name="subject"
+              type="text"
               autoComplete="off"
               value={form.subject}
               onChange={handleChange}
-              placeholder="Project, role, or idea"
+              placeholder="Subject (Optional)"
+              className="form-input"
             />
-          </label>
+          </div>
 
-          <label>
-            Message
+          <div className="form-group">
             <textarea
               name="message"
               autoComplete="off"
               value={form.message}
               onChange={handleChange}
-              rows="6"
-              placeholder="Tell me what you'd like to build."
+              rows="5"
+              placeholder="Describe your project, role, or idea..."
+              required
+              className="form-textarea"
             />
-          </label>
+          </div>
 
-          <button className="button primary" type="submit" disabled={status.loading}>
-            {status.loading ? "Sending..." : "Send message"}
-            <Send size={18} />
+          <button className="btn btn-primary btn-submit" type="submit" disabled={status.loading}>
+            {status.loading ? "Sending..." : "Send Message"}
+            <Send size={14} />
           </button>
 
           {status.success && (
-            <p className="status success">
-              <CheckCircle size={16} /> {status.success}
-            </p>
+            <div className="form-status success">
+              <CheckCircle size={16} /> <span>{status.success}</span>
+            </div>
           )}
           {status.error && (
-            <p className="status error">
-              <AlertCircle size={16} /> {status.error}
-            </p>
+            <div className="form-status error">
+              <AlertCircle size={16} /> <span>{status.error}</span>
+            </div>
           )}
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowUpRight,
   Code2,
@@ -6,243 +6,372 @@ import {
   Github,
   Linkedin,
   Mail,
-  Menu,
-  Rocket,
   Server,
   ShieldCheck,
   Sparkles,
-  X,
+  ExternalLink,
+  ChevronRight,
+  Download,
+  Cloud
 } from "lucide-react";
 import Profile from "./pages/Profile.jsx";
 import Contact from "./pages/Contact.jsx";
+import LampSwitch from "./components/LampSwitch.jsx";
 
 const projects = [
   {
-    title: "SaaS Analytics Dashboard",
-    type: "Product Engineering",
+    title: "Hotel Management System",
+    type: "React Application",
     description:
-      "A real-time insights platform with role-based access, interactive charts, and export-ready reporting.",
-    stack: ["React", "Node.js", "PostgreSQL", "Redis"],
+      "A web application designed to view available rooms categorized by amenities (such as AC or non-AC) and book them seamlessly from anywhere.",
+    stack: ["React", "HTML", "CSS", "JavaScript"],
+    demo: "#",
   },
   {
-    title: "Commerce Operations API",
-    type: "Backend Systems",
+    title: "Food Ordering System",
+    type: "Fullstack Web App",
     description:
-      "Order, payment, and inventory services designed for reliable fulfillment and clean admin workflows.",
-    stack: ["Express", "MongoDB", "Stripe", "Docker"],
-  },
-  {
-    title: "Collaboration Workspace",
-    type: "Fullstack App",
-    description:
-      "A shared project hub with authentication, file activity, notifications, and responsive team views.",
-    stack: ["React", "TypeScript", "Firebase", "Tailwind"],
+      "A dynamic ordering site enabling users to browse food selections by categories (veg, non-veg) and place orders online.",
+    stack: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
+    demo: "#",
   },
 ];
 
 const skills = [
-  { icon: Code2, label: "Frontend", value: "React, TypeScript, UI systems, accessibility" },
-  { icon: Server, label: "Backend", value: "Node.js, REST APIs, auth, services" },
-  { icon: Database, label: "Data", value: "PostgreSQL, MongoDB, schema design" },
-  { icon: ShieldCheck, label: "Delivery", value: "Testing, deployment, performance, security" },
+  { icon: Code2, label: "Frontend", value: "Vue.js, React.js, Vuetify" },
+  { icon: Server, label: "Backend", value: "Node.js" },
+  { icon: Cloud, label: "AWS Cloud", value: "Lambda, S3, Cloudfront" },
+  { icon: ShieldCheck, label: "Monitoring", value: "Sentry" },
 ];
 
 const timeline = [
   {
-    year: "2024 - Present",
-    role: "Fullstack Developer",
-    text: "Building scalable web applications from database design through polished user interfaces.",
+    year: "May 2024 – June 2024",
+    role: "Web Developer Intern — CodSoft",
+    text: "Developed practical skills in HTML, CSS, and JavaScript. Created portfolio layouts, landing pages, and interactive calculator projects.",
   },
   {
-    year: "2022 - 2024",
-    role: "Frontend Developer",
-    text: "Created responsive product experiences, dashboards, and reusable component libraries.",
+    year: "May 2023 – June 2023",
+    role: "Web Developer Intern — Adis Technologies",
+    text: "Created web applications including a customized music player and an interactive quiz interface.",
   },
   {
-    year: "Always",
-    role: "Continuous Learner",
-    text: "Exploring better architecture, cleaner APIs, and thoughtful product details.",
+    year: "2022 – 2026",
+    role: "B.Tech Computer Science & Engineering",
+    text: "CSPIT – Charusat University, Changa, Anand. Focused on software development and computer science core courses. CGPA: 7.22",
+  },
+  {
+    year: "2019 – 2022",
+    role: "Diploma in Computer Engineering",
+    text: "Tapi Diploma Engineering College, Surat. CGPA: 8.87",
   },
 ];
 
 function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [darkMode, setDarkMode] = useState(true); // Dark mode by default for premium feel
+  const [activeTab, setActiveTab] = useState("home");
+  const [time, setTime] = useState(new Date());
+  const [navState, setNavState] = useState("greeting");
 
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 200);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  // Clock tick
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
+
+  // Trigger floating nav greeting-to-links morph animation
+  useEffect(() => {
+    const currentHash = window.location.hash.replace("#", "");
+    if (currentHash && currentHash !== "home") {
+      setNavState("links");
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setNavState("links");
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Sync state with hash navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      const validTabs = ["home", "projects", "about", "contact"];
+      if (validTabs.includes(hash)) {
+        setActiveTab(hash);
+      } else {
+        // Default to home if empty or invalid
+        setActiveTab("home");
+        window.history.replaceState(null, "", "#home");
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    // Initial check
+    handleHashChange();
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+
+  // Get time-based greeting
+  const getGreeting = () => {
+    const hour = time.getHours();
+    if (hour >= 5 && hour < 12) return "Good morning";
+    if (hour >= 12 && hour < 17) return "Good afternoon";
+    if (hour >= 17 && hour < 22) return "Good evening";
+    return "Good night";
+  };
+
+  // Get time-based greeting emoji
+  const getGreetingEmoji = () => {
+    const hour = time.getHours();
+    if (hour >= 5 && hour < 12) return "☀️";
+    if (hour >= 12 && hour < 17) return "☕";
+    if (hour >= 17 && hour < 22) return "🌆";
+    return "🌙";
+  };
+
+  const changeTab = (tab) => {
+    window.location.hash = tab;
+  };
 
   return (
     <main className={darkMode ? "dark-mode" : ""}>
-      <nav className={`${menuOpen ? "nav nav-open" : "nav"} ${scrolled ? "nav-scrolled" : ""}`}>
-        <div
-          className={`nav-links${menuOpen ? " open" : ""}`}
-          id="primary-navigation"
-          aria-label="Primary navigation"
-        >
-          <div className="nav-drawer-header">
-            <span>Menu</span>
-            <button
-              type="button"
-              className="nav-close"
-              onClick={() => setMenuOpen(false)}
-              aria-label="Close menu"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <a href="#profile" onClick={() => setMenuOpen(false)}>
-            Profile
-          </a>
-          <a href="#projects" onClick={() => setMenuOpen(false)}>
-            Projects
-          </a>
-          <a href="#contact" onClick={() => setMenuOpen(false)}>
-            Contact
-          </a>
-        </div>
-        <button
-          type="button"
-          className="nav-toggle"
-          aria-expanded={menuOpen}
-          aria-controls="primary-navigation"
-          onClick={() => setMenuOpen((current) => !current)}
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          <span className="menu-text">Menu</span>
-          <span className="sr-only">Toggle navigation</span>
-        </button>
-        <div
-          className={`nav-overlay${menuOpen ? " open" : ""}`}
-          onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
-        />
-      </nav>
-      <button
-        type="button"
-        className="dark-mode-toggle"
-        onClick={() => setDarkMode((current) => !current)}
-        aria-label="Toggle dark mode"
-      >
-        <span className="toggle-icon">{darkMode ? "☀️" : "🌙"}</span>
-      </button>
+      <LampSwitch darkMode={darkMode} toggleTheme={() => setDarkMode((prev) => !prev)} />
+      {/* Dynamic Header */}
+      <header className="portfolio-header">
 
-      <section className="hero" id="top">
-        <div className="hero-image" aria-hidden="true" />
-        <div className="hero-content">
-          <p className="eyebrow">Fullstack Developer</p>
-          <h1>Building reliable web products from first idea to production.</h1>
-          <p className="hero-copy">
-            I create fast, clean, and maintainable applications with React, Node.js,
-            modern databases, and a product-minded approach to engineering.
+        {/* Navigation Tabs (Floating Morphing Pill) */}
+        <nav className={`tab-navigation nav-state-${navState}`}>
+          {/* Greeting State */}
+          <div className="nav-greeting-container">
+            <span className="nav-greeting-text">
+              {getGreeting()} {getGreetingEmoji()}
+            </span>
+          </div>
+
+          {/* Navigation Tabs State */}
+          <div className="nav-tabs">
+            {["home", "projects", "about", "contact"].map((tab) => (
+              <button
+                key={tab}
+                className={`tab-btn ${activeTab === tab ? "active" : ""}`}
+                onClick={() => changeTab(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Static Hero Presentation (similar style to Aayush's landing hero) */}
+        <div className="header-hero">
+          <h1 className="hero-primary-text">
+            Code that <span className="highlight-text italic-serif">feels</span> designed.
+            <br />
+            Engineering that actually ships.
+          </h1>
+          <p className="subtitle-text">
+            Hello, I'm <strong className="bold-name">Archit Pidhadiya</strong> — a web developer focused on building clean frontend systems with Vue and React, robust backend logic with Node.js, and deploying cloud services with AWS.
           </p>
-          <div className="hero-actions">
-            <a className="button primary" href="#projects">
-              View Work <ArrowUpRight size={18} />
-            </a>
-            <a className="button secondary" href="mailto:hello@example.com">
-              Contact Me <Mail size={18} />
-            </a>
-          </div>
+        </div>
+      </header>
 
-          <div className="hero-panels" aria-label="Highlights of working style">
-            <article className="hero-panel">
-              <h3>Built for products</h3>
-              <p>Interactive UI details, smooth motion, and meaningful feedback at every step.</p>
-            </article>
-            <article className="hero-panel">
-              <h3>End-to-end flow</h3>
-              <p>Design, API, and deployment align to create polished experiences that feel modern.</p>
-            </article>
-            <article className="hero-panel">
-              <h3>Responsive ready</h3>
-              <p>Layouts reshape gracefully for phones, tablets, and widescreen viewing.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="metrics" aria-label="Highlights">
-        <div>
-          <strong>15+</strong>
-          <span>Completed builds</span>
-        </div>
-        <div>
-          <strong>4+</strong>
-          <span>Years coding</span>
-        </div>
-        <div>
-          <strong>100%</strong>
-          <span>Fullstack focus</span>
-        </div>
-      </section>
-
-      <Profile />
-
-      <section className="section" id="projects">
-        <div className="section-header">
-          <p className="eyebrow">Selected Work</p>
-          <h2>Projects that show the full stack.</h2>
-        </div>
-        <div className="project-grid">
-          {projects.map((project) => (
-            <article className="project-card" key={project.title}>
-              <div>
-                <span>{project.type}</span>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
+      {/* Main Content Areas with Switch */}
+      <div className="content-container">
+        {activeTab === "home" && (
+          <div className="tab-pane fade-in">
+            {/* Brief Introduction Grid */}
+            <div className="intro-grid">
+              <div className="intro-main">
+                <div className="section-label">Introduction</div>
+                <h2 className="serif-title">Building reliable digital systems.</h2>
+                <p className="paragraph-text">
+                  I engineer responsive products from base schema definitions through to interactive interfaces. My coding style emphasizes clean architecture, scalability, and satisfying interactive micro-details.
+                </p>
+                <div className="action-row">
+                  <button className="btn btn-primary" onClick={() => changeTab("projects")}>
+                    Explore Work <ChevronRight size={16} />
+                  </button>
+                  <button className="btn btn-secondary" onClick={() => changeTab("contact")}>
+                    Get in touch
+                  </button>
+                  <a href="/resume.pdf" download="Archit_Pidhadiya_Resume.pdf" className="btn btn-secondary btn-resume-accent">
+                    Resume <Download size={16} />
+                  </a>
+                </div>
               </div>
-              <ul>
-                {project.stack.map((tech) => (
-                  <li key={tech}>{tech}</li>
+
+              <div className="intro-highlight-cards">
+                <div className="mini-card">
+                  <Sparkles size={20} className="icon-orange" />
+                  <h4>Product-Driven</h4>
+                  <p>Designed with user flows and seamless performance in mind.</p>
+                </div>
+                <div className="mini-card">
+                  <Server size={20} className="icon-violet" />
+                  <h4>API-First Flow</h4>
+                  <p>Reliable RESTful API contracts built to handle high volume cleanly.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Metrics Panel */}
+            <section className="metrics-banner">
+              <div className="metric-box">
+                <span className="metric-num">15+</span>
+                <span className="metric-label">Completed Projects</span>
+              </div>
+              <div className="metric-box">
+                <span className="metric-num">4+</span>
+                <span className="metric-label">Years of Development</span>
+              </div>
+              <div className="metric-box">
+                <span className="metric-num">100%</span>
+                <span className="metric-label">Fullstack Passion</span>
+              </div>
+            </section>
+
+            {/* Featured Projects Highlight */}
+            <section className="featured-section">
+              <div className="section-header-flex">
+                <div>
+                  <div className="section-label">Selected Projects</div>
+                  <h3 className="section-title">A glance at some featured work.</h3>
+                </div>
+                <button className="text-link" onClick={() => changeTab("projects")}>
+                  View all projects <ArrowUpRight size={16} />
+                </button>
+              </div>
+              <div className="project-grid">
+                {projects.slice(0, 2).map((project) => (
+                  <article className="project-card-v2" key={project.title}>
+                    <div className="card-header">
+                      <span className="project-type">{project.type}</span>
+                      <h4 className="project-title-text">{project.title}</h4>
+                    </div>
+                    <p className="project-desc">{project.description}</p>
+                    <div className="card-footer">
+                      <ul className="tech-tags">
+                        {project.stack.map((tech) => (
+                          <li key={tech}>{tech}</li>
+                        ))}
+                      </ul>
+                      <a href={project.demo} className="project-link">
+                        <ExternalLink size={16} />
+                      </a>
+                    </div>
+                  </article>
                 ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section skill-section" id="skills">
-        <div className="section-header">
-          <p className="eyebrow">Capabilities</p>
-          <h2>Tools I use to ship complete products.</h2>
-        </div>
-        <div className="skill-grid">
-          {skills.map(({ icon: Icon, label, value }) => (
-            <article className="skill-card" key={label}>
-              <Icon size={24} />
-              <h3>{label}</h3>
-              <p>{value}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section timeline-section">
-        <div className="section-header">
-          <p className="eyebrow">Experience</p>
-          <h2>A steady path through modern web development.</h2>
-        </div>
-        <div className="timeline">
-          {timeline.map((item) => (
-            <article key={item.role}>
-              <span>{item.year}</span>
-              <div>
-                <h3>{item.role}</h3>
-                <p>{item.text}</p>
               </div>
-            </article>
-          ))}
-        </div>
-      </section>
+            </section>
+          </div>
+        )}
 
-      <Contact />
+        {activeTab === "projects" && (
+          <div className="tab-pane fade-in">
+            <section className="projects-page">
+              <div className="section-header-simple">
+                <div className="section-label">Portfolio</div>
+                <h2 className="serif-title">Complete products & architectures.</h2>
+                <p className="subtitle-desc">
+                  Explore fullstack builds designed for speed, fluid interfaces, and modular backend deployment.
+                </p>
+              </div>
+
+              <div className="project-grid-full">
+                {projects.map((project) => (
+                  <article className="project-card-v2" key={project.title}>
+                    <div className="card-header">
+                      <span className="project-type">{project.type}</span>
+                      <h4 className="project-title-text">{project.title}</h4>
+                    </div>
+                    <p className="project-desc">{project.description}</p>
+                    <div className="card-footer">
+                      <ul className="tech-tags">
+                        {project.stack.map((tech) => (
+                          <li key={tech}>{tech}</li>
+                        ))}
+                      </ul>
+                      <a href={project.demo} className="project-link">
+                        <ExternalLink size={16} />
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === "about" && (
+          <div className="tab-pane fade-in">
+            {/* Import Profile and add core details */}
+            <Profile />
+
+            {/* Core Capabilities */}
+            <section className="skills-sub-section">
+              <div className="section-label">Capabilities</div>
+              <h3 className="section-title">Modern tools used to ship.</h3>
+              <div className="skills-grid-v2">
+                {skills.map(({ icon: Icon, label, value }) => (
+                  <article className="skill-card-v2" key={label}>
+                    <div className="skill-head">
+                      <Icon size={20} className="skill-icon" />
+                      <h4>{label}</h4>
+                    </div>
+                    <p>{value}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            {/* Timeline Experience */}
+            <section className="timeline-sub-section">
+              <div className="section-label">Experience</div>
+              <h3 className="section-title">A progressive history.</h3>
+              <div className="timeline-list-v2">
+                {timeline.map((item) => (
+                  <article className="timeline-item-v2" key={item.role}>
+                    <div className="timeline-date">{item.year}</div>
+                    <div className="timeline-info">
+                      <h4>{item.role}</h4>
+                      <p>{item.text}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === "contact" && (
+          <div className="tab-pane fade-in">
+            <Contact />
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer className="portfolio-footer">
+        <p className="copyright-text">
+          &copy; {new Date().getFullYear()} Archit Pidhadiya. Crafted in React.
+        </p>
+        <div className="footer-links">
+          <a href="https://github.com/Architpidhadiya04" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <Github size={18} />
+          </a>
+          <a href="https://www.linkedin.com/in/archit-pidhadiya" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <Linkedin size={18} />
+          </a>
+          <a href="mailto:architpidhadiya04@gmail.com" aria-label="Email">
+            <Mail size={18} />
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
